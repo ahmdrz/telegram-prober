@@ -1,0 +1,17 @@
+variables:
+  TAG: "ahmdrz/telegram-prober:$CI_COMMIT_REF_SLUG"
+
+stages:
+  - build
+
+before_script:
+  - docker login -u ahmdrz -p $REGISTERY_TOKEN
+
+build:
+  image: docker:git
+  stage: build
+  services:
+    - docker:dind
+  script:
+    - docker build -t $TAG .
+    - docker push $TAG
