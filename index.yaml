@@ -3,9 +3,9 @@ entries:
   telegram-prober:
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2021-07-27T14:01:29.867512059+04:30"
+    created: "2021-07-27T14:11:47.081203428+04:30"
     description: A Telegram Prober Helm chart for Kubernetes
-    digest: 489ffbc7171708f29cf93e27a1b6bb58edb3e8e1069f2fba57a80e977e438ad2
+    digest: 5b08f49240bd8a3ec5c403d2b4d3645164959e40996b4ede4b95dc3249478fc0
     keywords:
     - telegram
     - probe
@@ -18,6 +18,6 @@ entries:
     - https://github.com/ahmdrz/telegram-prober
     type: application
     urls:
-    - telegram-prober-0.1.0.tgz
+    - https://ahmdrz.github.io/telegram-prober/telegram-prober-0.1.0.tgz
     version: 0.1.0
-generated: "2021-07-27T14:01:29.867004322+04:30"
+generated: "2021-07-27T14:11:47.079896595+04:30"

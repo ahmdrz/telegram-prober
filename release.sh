@@ -4,4 +4,4 @@ mv temp/helm-chart telegram-prober
 rm -rf temp
 helm package telegram-prober
 rm -rf telegram-prober
-helm repo index .
+helm repo index . --url https://ahmdrz.github.io/telegram-prober
