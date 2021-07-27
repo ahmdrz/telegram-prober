@@ -1,6 +1,7 @@
 #!/bin/bash
-git clone https://github.com/ahmdrz/telegram-prober
-mv telegram-prober/helm-chart .
+git clone https://github.com/ahmdrz/telegram-prober temp
+mv temp/helm-chart telegram-prober
+rm -rf temp
+helm package telegram-prober
 rm -rf telegram-prober
-zip -r telegram-prober.zip helm-chart
-rm -rf helm-chart
+helm repo index .
