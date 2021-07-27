@@ -2,9 +2,9 @@ replicaCount: 1
 namespace: "monitoring"
 
 image:
-  repository: ahmdrz/telegram-bot-monitoring
+  repository: ahmdrz/telegram-prober
   pullPolicy: Always
-  tag: "master"
+  tag: "latest"
 
 imagePullSecrets: [ ]
 nameOverride: ""
