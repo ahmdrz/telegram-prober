@@ -1,5 +1,6 @@
 from time import sleep
 
+from decouple import config
 from telethon.tl.functions.messages import GetHistoryRequest
 
 from telegram.client import start_client, pick_random_client
@@ -20,12 +21,12 @@ async def send_message_and_wait_for_reply(target):
         add_offset=0,
         hash=0,
     )
-    tries = 0
-    while tries < 3:
+    timeout = int(config('REPLY_TIMEOUT', '30'))
+    while timeout > 0:
         history = await client(history_request)
         for message in history.messages:
             if message.from_id == response.to_id.user_id:
                 return True
-        tries += 1
-        sleep(0.1)
+        timeout -= 1
+        sleep(1)
     return False
