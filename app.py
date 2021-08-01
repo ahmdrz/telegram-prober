@@ -1,9 +1,8 @@
 import logging
-import time
 
 from flask import Flask, request, make_response
 
-from telegram.client import get_all_sessions
+from telegram.client import get_all_sessions, pick_random_client
 from telegram.prober import send_message_and_wait_for_reply
 
 app = Flask(__name__)
@@ -28,16 +27,17 @@ def generate_metrics_response(success: bool, response_time: float) -> str:
 @app.route('/probe')
 async def telegram_bot_health_check():
     username = request.args.get('target')
-    start_time = time.time()
     app.logger.info('checking %s', username)
+
+    client = pick_random_client()
+    duration = None
     try:
-        result = await send_message_and_wait_for_reply(username)
+        result, duration = await send_message_and_wait_for_reply(client, username)
     except Exception as e:
         app.logger.error(e)
         result = False
+
     app.logger.info('result %s=%s', username, 'ok' if result else 'nok')
-    end_time = time.time()
-    duration = end_time - start_time
     response = make_response(generate_metrics_response(result, duration), 200 if result else 503)
     response.mimetype = "text/plain"
     return response
