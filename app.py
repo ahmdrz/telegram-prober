@@ -2,7 +2,7 @@ import logging
 
 from flask import Flask, request, make_response
 
-from telegram.client import get_all_sessions, pick_random_client
+from telegram.client import get_all_sessions, manager_instance
 from telegram.prober import send_message_and_wait_for_reply
 
 app = Flask(__name__)
@@ -29,7 +29,7 @@ async def telegram_bot_health_check():
     username = request.args.get('target')
     app.logger.info('checking %s', username)
 
-    client = pick_random_client()
+    client = await manager_instance.get_next()
     duration = None
     try:
         result, duration = await send_message_and_wait_for_reply(client, username)

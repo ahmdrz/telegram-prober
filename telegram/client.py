@@ -1,6 +1,5 @@
 import asyncio
 import os
-import random
 import typing
 
 from decouple import config
@@ -23,9 +22,9 @@ class PeerManager:
 
 
 class CustomTelegramClient(TelegramClient):
-    def __init__(self, session: 'typing.Union[str, Session]', api_id: int, api_hash: str):
+    def __init__(self, session: 'typing.Union[str, Session]', api_id: int, api_hash: str, peer_manager: PeerManager):
         super().__init__(session, api_id, api_hash)
-        self.peer_manager = PeerManager()
+        self.peer_manager = peer_manager
 
 
 async def start_client(client, phone=None):
@@ -37,16 +36,29 @@ def get_all_sessions():
     return telethon_sessions
 
 
-def pick_random_client() -> CustomTelegramClient:
-    telethon_sessions = get_all_sessions()
-    random_session = random.randrange(0, len(telethon_sessions))
-    client_session_string = telethon_sessions[random_session]
-    return get_client(client_session_string)
+class Manager:
+    def __init__(self):
+        self.sessions = get_all_sessions()
+        self.peer_managers = [
+            PeerManager()
+            for _ in self.sessions
+        ]
+        self.index = 0
+        self.lock = asyncio.Lock()
+
+    async def get_next(self):
+        async with self.lock:
+            session = self.sessions[self.index]
+            client = CustomTelegramClient(
+                session=StringSession(session),
+                api_hash=config('TELEGRAM_API_HASH'),
+                api_id=int(config('TELEGRAM_API_ID')),
+                peer_manager=self.peer_managers[self.index]
+            )
+            self.index += 1
+            if self.index >= len(self.sessions):
+                self.index = 0
+        return client
 
 
-def get_client(session=None) -> CustomTelegramClient:
-    return CustomTelegramClient(
-        session=StringSession(session),
-        api_hash=config('TELEGRAM_API_HASH'),
-        api_id=int(config('TELEGRAM_API_ID')),
-    )
+manager_instance = Manager()
