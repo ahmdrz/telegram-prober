@@ -10,10 +10,10 @@ from telethon.sessions import StringSession, Session
 class PeerManager:
     def __init__(self):
         self._peers = dict()
+        self._lock = asyncio.Lock()
 
     async def get(self, client, target):
-        lock = asyncio.Lock()
-        async with lock:
+        async with self._lock:
             if target in self._peers:
                 return self._peers[target]
             peer = utils.get_input_peer(await client.get_input_entity(target))
@@ -38,26 +38,26 @@ def get_all_sessions():
 
 class Manager:
     def __init__(self):
-        self.sessions = get_all_sessions()
-        self.peer_managers = [
+        self._sessions = get_all_sessions()
+        self._peer_managers = [
             PeerManager()
-            for _ in self.sessions
+            for _ in self._sessions
         ]
-        self.index = 0
-        self.lock = asyncio.Lock()
+        self._index = 0
+        self._lock = asyncio.Lock()
 
     async def get_next(self):
-        async with self.lock:
-            session = self.sessions[self.index]
+        async with self._lock:
+            session = self._sessions[self._index]
             client = CustomTelegramClient(
                 session=StringSession(session),
                 api_hash=config('TELEGRAM_API_HASH'),
                 api_id=int(config('TELEGRAM_API_ID')),
-                peer_manager=self.peer_managers[self.index]
+                peer_manager=self._peer_managers[self._index]
             )
-            self.index += 1
-            if self.index >= len(self.sessions):
-                self.index = 0
+            self._index += 1
+            if self._index >= len(self._sessions):
+                self._index = 0
         return client
 
 
