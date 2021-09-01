@@ -38,7 +38,7 @@ async def telegram_bot_health_check():
         result = False
 
     app.logger.info('result %s=%s', username, 'ok' if result else 'nok')
-    response = make_response(generate_metrics_response(result, duration), 200 if result else 503)
+    response = make_response(generate_metrics_response(result, duration), 200)
     response.mimetype = "text/plain"
     return response
 
