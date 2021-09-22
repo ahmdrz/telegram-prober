@@ -37,9 +37,9 @@ spec:
                 name: {{ include "telegram-prober.fullname" . }}-secret
           env:
             - name: REPLY_TIMEOUT
-              value: {{ .Values.replyTimeout | default 30 }}
+              value: {{ .Values.replyTimeout | default 30 | quote }}
             - name: REPLY_RESOLUTION
-              value: {{ .Values.replyResolution | default 1 }}
+              value: {{ .Values.replyResolution | default 1 | quote }}
           ports:
             - name: http
               containerPort: 80
